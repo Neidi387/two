@@ -15,20 +15,34 @@ fn get_reports(input: String) -> Vec<Vec<i16>> {
 }
 
 fn is_success(report: &&Vec<i16>) -> bool {
-    let mut last_diff = report[1] - report[0];
-    if last_diff.abs() < 1 || last_diff.abs() > 3 {
-        return false;
-    }
-    for i in 1..report.len() - 1 {
+    let mut chances: u8 = 1;
+    let mut last_diff: i16;
+    for i in 0..report.len() - 1 {
         let diff = report[i+1] - report[i];
         if diff.abs() < 1 || diff.abs() > 3 {
-            return false;
+            if 0 == chances {
+                return false;
+            }
+            chances -= 1;
+            continue;            
+        }
+        if 0 == i {
+            last_diff = diff;
+            continue;
         }
         if last_diff < 0 && diff > 0 {
-            return false;
+            if 0 == chances {
+                return false;
+            }
+            chances -= 1;
+            continue;
         }
         if last_diff > 0 && diff < 0 {
-            return  false;
+            if 0 == chances {
+                return false;
+            }
+            chances -= 1;
+            continue;
         }
         last_diff = diff;
     }
